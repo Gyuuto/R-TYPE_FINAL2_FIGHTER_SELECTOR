@@ -85,6 +85,24 @@ export default class Home extends Vue {
     }
 
     random_choose () {
+        function shuffle(array) {
+            let currentIndex = array.length,  randomIndex;
+
+            // While there remain elements to shuffle...
+            while (currentIndex != 0) {
+
+                // Pick a remaining element...
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+
+                // And swap it with the current element.
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+
+            return array;
+        }
+
         let available_fighters: Fighter[] = this.all_fighters.filter(f => f.use).filter(f => FighterUtil.is_available(f));
         let choose_fighter_idx: number[] = range(0, this.N).map(i => Math.floor(Math.random()*available_fighters.length));
 
@@ -96,11 +114,12 @@ export default class Home extends Vue {
             this.all_stages
                 .filter(s => s.use)
                 .filter(s => StageUtil.is_final_stage(s) == true);
-        let choose_stage_idx: number[] = range(0, this.N-1).map(i => Math.floor(Math.random()*available_stages.length));
         let choose_final_stage_idx = Math.floor(Math.random()*available_final_stages.length);
 
+        shuffle(available_stages);
+
         this.selected_fighter = choose_fighter_idx.map(i => available_fighters[i]);
-        this.selected_stage = choose_stage_idx.map(i => available_stages[i]);
+        this.selected_stage = available_stages.slice(0, this.N-1);
         this.selected_stage.push(available_final_stages[choose_final_stage_idx]);
     }
 
