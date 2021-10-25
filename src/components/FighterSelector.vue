@@ -16,7 +16,7 @@
           <input type="checkbox"
                  v-on:change="save_settings"
                  v-model="all_fighters[f].use"
-                 v-bind:disabled="!is_available_fighter(all_fighters[i])"/>
+                 v-bind:disabled="!is_available_fighter(all_fighters[f])"/>
           <label class="stage_checkbox" v-bind:title="all_fighters_full_name[f]">{{ all_fighters_name[f] }}</label>
         </span>
         <span v-else></span>
