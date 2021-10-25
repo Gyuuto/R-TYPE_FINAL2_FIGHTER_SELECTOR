@@ -15,18 +15,27 @@
       <span class="fighter">{{ get_fighter_fullname(selected_fighter[i]) }}</span>
     </div>
   </div>
-  
-  <div class="selector-table">
-    <span class="selector">
-      <a>機体選択</a>
-      <FighterSelector @changeFighters="childChangeFighters($event)"/>
-    </span>
 
-    <span class="selector">
-      <a>ステージ選択</a>
-      <StageSelector @changeStages="childChangeStages($event)"/>
-    </span>
-  </div>
+  <details>
+    <summary>機体選択</summary>
+    <FighterSelector/>
+  </details>
+  <details>
+    <summary>ステージ選択</summary>
+    <StageSelector/>
+  </details>
+
+  <!-- <div class="selector-table"> -->
+  <!--   <span class="selector"> -->
+  <!--     <a>機体選択</a> -->
+  <!--     <FighterSelector /> -->
+  <!--   </span> -->
+
+  <!--   <span class="selector"> -->
+  <!--     <a>ステージ選択</a> -->
+  <!--     <StageSelector /> -->
+  <!--   </span> -->
+  <!-- </div> -->
 </div>
 </template>
 
@@ -52,12 +61,12 @@ export default class Home extends Vue {
     const N = 7;
     const range = range;
 
-    all_fighters: Fighter[] = this.get_cached_fighters();
+    all_fighters: () => Fighter[] = () => { return Settings.fighters };
     selected_fighter: Fighter[] = range(0, this.N).map(i => {
         return new Fighter(i);
     });
 
-    all_stages: Stage[] = this.get_cached_stages();
+    all_stages: () => Stage[] = () => { return Settings.stages };
     selected_stage: Stage[] = range(0, this.N).map(i => {
         return new Stage(i);
     });
@@ -67,21 +76,6 @@ export default class Home extends Vue {
     }
     get_fighter_fullname ( fighter: Fighter ) {
         return FighterUtil.get_fighter_fullname_from_id(fighter);
-    }
-
-    get_cached_fighters () {
-        let ret = Settings.fighters;
-
-        if ( ret == undefined )
-            return range(0, FighterUtil.fighter_num).map(i => new Fighter(i));
-        else return ret;
-    }
-    get_cached_stages () {
-        let ret = Settings.stages;
-
-        if ( ret == undefined )
-            return range(0, StageUtil.stage_num).map(i => new Stage(i));
-        else return ret;
     }
 
     random_choose () {
@@ -103,15 +97,15 @@ export default class Home extends Vue {
             return array;
         }
 
-        let available_fighters: Fighter[] = this.all_fighters.filter(f => f.use).filter(f => FighterUtil.is_available(f));
+        let available_fighters: Fighter[] = this.all_fighters().filter(f => f.use).filter(f => FighterUtil.is_available(f));
         let choose_fighter_idx: number[] = range(0, this.N).map(i => Math.floor(Math.random()*available_fighters.length));
 
         let available_stages: Stage[] =
-            this.all_stages
+            this.all_stages()
                 .filter(s => s.use)
                 .filter(s => StageUtil.is_final_stage(s) == false);
         let available_final_stages: Stage[] =
-            this.all_stages
+            this.all_stages()
                 .filter(s => s.use)
                 .filter(s => StageUtil.is_final_stage(s) == true);
         let choose_final_stage_idx = Math.floor(Math.random()*available_final_stages.length);
@@ -121,16 +115,6 @@ export default class Home extends Vue {
         this.selected_fighter = choose_fighter_idx.map(i => available_fighters[i]);
         this.selected_stage = available_stages.slice(0, this.N-1);
         this.selected_stage.push(available_final_stages[choose_final_stage_idx]);
-    }
-
-    // emit from FighterSelector
-    childChangeFighters ( fighters : Fighter[] ) {
-        this.all_fighters = fighters;
-    }
-
-    // emit from StageSelector
-    childChangeStages ( stages : Stage[] ) {
-        this.all_stages = stages;
     }
 }
 </script>

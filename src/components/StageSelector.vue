@@ -1,15 +1,28 @@
 <template>
+<div>
   <div>
-    <button v-on:click="save_stages()">Save</button>
+    <span>
+      <button class="button" v-on:click="all_set">全選択</button>
+    </span>
+    <span>
+      <button class="button" v-on:click="all_clear">全消去</button>
+    </span>
   </div>
 
-  <div id="stage_table">
-    <div v-for="i in range(0, 20)" :key="i">
-      <!-- <span class="fighter_checkbox"><input type="checkbox" v-on:input="change_check(i)" /></span> -->
-      <span class="stage_checkbox"><input type="checkbox" v-model="all_stages[i].use" /></span>
-      <span class="stage_label"><label>{{ all_stages_name[i] }}</label></span>
+  <div class="stage_table">
+    <div v-for="v_s1 in stage_list_id" :key="v_s1">
+      <span class="stage_cell" v-for="s in v_s1" :key="s">
+        <span v-if="s != -1">
+          <input type="checkbox"
+                 v-on:change="save_settings"
+                 v-model="all_stages[s].use" />
+          <label class="stage_checkbox">{{ all_stages_name[s] }}</label>
+        </span>
+        <span v-else></span>
+      </span>
     </div>
   </div>
+</div>
 </template>
 
 <script lang="ts">
@@ -23,23 +36,31 @@ import { Settings } from "@/struct/Settings.ts";
 
 export default class StageSelector extends Vue {
     const range = range;
+    const stage_list_id = [
+        [ 0,  1,  2,  3,  4,  5,  6],
+        [-1, -1, -1, -1, -1,  7,  8],
+        [-1, -1, -1, -1, -1,  9, 10],
+        [11, 12, 13, 14, 15, 16, 17],
+        [18, 19, -1, -1, -1, -1, -1]
+    ];
 
-    all_stages: Stage[] = this.get_cached_stages();
-        
+    all_stages: Stage[] = Settings.stages;
+
     all_stages_name : string[] = this.all_stages.map(s => {
         return StageUtil.get_stage_name_from_id(s);
     });
 
-    get_cached_stages () {
-        let ret = Settings.stages;
-
-        if ( ret == undefined )
-            return range(0, StageUtil.stage_num).map(i => new Stage(i));
-        else return ret;
+    all_set () {
+        for ( let s of this.all_stages ) s.use = true;
+        this.save_settings(undefined);
     }
-    save_stages () {
+    all_clear () {
+        for ( let s of this.all_stages ) s.use = false;
+        this.save_settings(undefined);
+    }
+
+    save_settings ( e ) {
         Settings.stages = this.all_stages;
-        this.$emit("changeStages", this.all_stages);
     }
 }
 </script>
@@ -59,5 +80,23 @@ li {
 }
 a {
   color: #42b983;
+}
+button {
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+.stage_table {
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
+}
+.stage_cell {
+    display: table-cell;
+    margin-left: auto;
+    margin-right: auto;
+    width: 64px;
+    text-align: left;
 }
 </style>
