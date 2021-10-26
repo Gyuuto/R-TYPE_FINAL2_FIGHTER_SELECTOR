@@ -2,11 +2,6 @@
 <div class="home">
   <h1>R-TYPE FINAL2 ランダマイザ</h1>
   
-  <!-- <details> -->
-    <!--   <summary>Test</summary> -->
-    <!--   <Test :message="test" @changeText="childEmit($event)" /> -->
-    <!-- </details> -->
-  
   <button v-on:click="random_choose()">ランダム</button>
   
   <div class="table">
@@ -24,18 +19,6 @@
     <summary>ステージ選択</summary>
     <StageSelector/>
   </details>
-
-  <!-- <div class="selector-table"> -->
-  <!--   <span class="selector"> -->
-  <!--     <a>機体選択</a> -->
-  <!--     <FighterSelector /> -->
-  <!--   </span> -->
-
-  <!--   <span class="selector"> -->
-  <!--     <a>ステージ選択</a> -->
-  <!--     <StageSelector /> -->
-  <!--   </span> -->
-  <!-- </div> -->
 </div>
 </template>
 
@@ -61,12 +44,10 @@ export default class Home extends Vue {
     const N = 7;
     const range = range;
 
-    all_fighters: () => Fighter[] = () => { return Settings.fighters };
     selected_fighter: Fighter[] = range(0, this.N).map(i => {
         return new Fighter(i);
     });
 
-    all_stages: () => Stage[] = () => { return Settings.stages };
     selected_stage: Stage[] = range(0, this.N).map(i => {
         return new Stage(i);
     });
@@ -97,15 +78,18 @@ export default class Home extends Vue {
             return array;
         }
 
-        let available_fighters: Fighter[] = this.all_fighters().filter(f => f.use).filter(f => FighterUtil.is_available(f));
-        let choose_fighter_idx: number[] = range(0, this.N).map(i => Math.floor(Math.random()*available_fighters.length));
+        let available_fighters: Fighter[] = Settings.fighters
+            .filter(f => f.use)
+            .filter(f => FighterUtil.is_available(f));
+        let choose_fighter_idx: number[] = range(0, this.N)
+            .map(i => Math.floor(Math.random()*available_fighters.length));
 
         let available_stages: Stage[] =
-            this.all_stages()
+            Settings.stages
                 .filter(s => s.use)
                 .filter(s => StageUtil.is_final_stage(s) == false);
         let available_final_stages: Stage[] =
-            this.all_stages()
+            Settings.stages
                 .filter(s => s.use)
                 .filter(s => StageUtil.is_final_stage(s) == true);
         let choose_final_stage_idx = Math.floor(Math.random()*available_final_stages.length);

@@ -1,10 +1,11 @@
 import ElectronStore from "electron-store";
-import Fighter from "./Fighter.ts";
-import Stage from "./Stage.ts";
+import { Fighter, FighterUtil } from "./Fighter.ts";
+import { Stage, StageUtil } from "./Stage.ts";
+import { range } from "@/logic/util.ts";
 
 type SettingType = {
-	fighters: Fighter[] | undefined;
-	stages: Stage[] | undefined;
+	fighters: Fighter[];
+	stages: Stage[];
 };
 
 class _Setting {

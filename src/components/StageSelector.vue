@@ -35,8 +35,8 @@ import { Settings } from "@/struct/Settings.ts";
 })
 
 export default class StageSelector extends Vue {
-    const range = range;
-    const stage_list_id = [
+    range = range;
+    stage_list_id = [
         [ 0,  1,  2,  3,  4,  5,  6],
         [-1, -1, -1, -1, -1,  7,  8],
         [-1, -1, -1, -1, -1,  9, 10],
@@ -44,22 +44,26 @@ export default class StageSelector extends Vue {
         [18, 19, -1, -1, -1, -1, -1]
     ];
 
-    all_stages: Stage[] = Settings.stages;
+    all_stages: Stage[] = this.load_stages();
+
+    load_stages (): Stage[] {
+        return Settings.stages;
+    }
 
     all_stages_name : string[] = this.all_stages.map(s => {
         return StageUtil.get_stage_name_from_id(s);
     });
 
-    all_set () {
+    all_set (): void {
         for ( let s of this.all_stages ) s.use = true;
-        this.save_settings(undefined);
+        this.save_settings();
     }
-    all_clear () {
+    all_clear (): void {
         for ( let s of this.all_stages ) s.use = false;
-        this.save_settings(undefined);
+        this.save_settings();
     }
 
-    save_settings ( e ) {
+    save_settings (): void {
         Settings.stages = this.all_stages;
     }
 }

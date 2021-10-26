@@ -1,29 +1,29 @@
 <template>
-<div>
   <div>
-    <span>
-      <button class="button" v-on:click="all_set">全選択</button>
-    </span>
-    <span>
-      <button class="button" v-on:click="all_clear">全消去</button>
-    </span>
-  </div>
-
-  <div class="fighter_table">
-    <div v-for="v_f1 in fighter_list_id" :key="v_f1">
-      <span class="fighter_cell" v-for="f in v_f1" :key="f">
-        <span class="fighter_stand" v-if="f != -1">
-          <input type="checkbox"
-                 v-on:change="save_settings"
-                 v-model="all_fighters[f].use"
-                 v-bind:disabled="!is_available_fighter(all_fighters[f])"/>
-          <label class="stage_checkbox" v-bind:title="all_fighters_full_name[f]">{{ all_fighters_name[f] }}</label>
-        </span>
-        <span v-else></span>
+    <div>
+      <span>
+        <button class="button" v-on:click="all_set">全選択</button>
       </span>
+      <span>
+        <button class="button" v-on:click="all_clear">全消去</button>
+      </span>
+    </div>
+
+    <div class="fighter_table">
+      <div v-for="v_f1 in fighter_list_id" :key="v_f1">
+        <span class="fighter_cell" v-for="f in v_f1" :key="f">
+          <span class="fighter_stand" v-if="f != -1">
+            <input type="checkbox"
+                   v-on:change="save_settings"
+                   v-model="all_fighters[f].use"
+                   v-bind:disabled="!is_available_fighter(all_fighters[f])"/>
+            <label class="stage_checkbox" v-bind:title="all_fighters_full_name[f]">{{ all_fighters_name[f] }}</label>
+          </span>
+          <span v-else></span>
+        </span>
+      </div>
+    </div>
   </div>
-  </div>
-</div>
 </template>
 
 <script lang="ts">
@@ -36,8 +36,8 @@ import { Settings } from "@/struct/Settings.ts";
 })
 
 export default class FighterSelector extends Vue {
-    const range = range;
-    const fighter_list_id = [
+    range = range;
+    fighter_list_id = [
         [   0,   1,   2,   3,  -1,  -1,  -1,  -1,  -1,  -1 ],
         [  -1,  -1,  -1,   4,  -1,  -1,  -1,  -1,  -1,  -1 ],
         [  -1,  -1,  -1,   5,   6,   7,  -1,  -1,  -1,  -1 ],
@@ -91,8 +91,11 @@ export default class FighterSelector extends Vue {
         // [  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1 ],
         // [  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1 ],
     ];
-    all_fighters: Fighter[] = Settings.fighters;
+    all_fighters: Fighter[] = this.load_fighters();
 
+    load_fighters (): Fighter[] {
+        return Settings.fighters;
+    }
     all_fighters_full_name : string[] = this.all_fighters.map(f => {
         return FighterUtil.get_fighter_fullname_from_id(f);
     });
@@ -100,21 +103,20 @@ export default class FighterSelector extends Vue {
         return FighterUtil.get_fighter_model_from_id(f);
     });
 
-    is_available_fighter ( fighter : Fighter ) {
+    is_available_fighter ( fighter : Fighter ): boolean {
         return FighterUtil.is_available(fighter);
     }
 
-
-    all_set () {
+    all_set (): void {
         for ( let f of this.all_fighters ) f.use = true;
-        this.save_settings(undefined);
+        this.save_settings();
     }
-    all_clear () {
+    all_clear (): void {
         for ( let f of this.all_fighters ) f.use = false;
-        this.save_settings(undefined);
+        this.save_settings();
     }
 
-    save_settings () {
+    save_settings (): void {
         Settings.fighters = this.all_fighters;
     }
 }
@@ -135,6 +137,12 @@ li {
 }
 a {
   color: #42b983;
+}
+button {
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
 .fighter_table {
     display: table;
