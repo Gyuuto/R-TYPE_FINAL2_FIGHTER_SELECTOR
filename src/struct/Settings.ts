@@ -8,9 +8,22 @@ type SettingType = {
 	stages: Stage[];
 };
 
-class _Setting {
-	private store = new ElectronStore<SettingType>();
+class _Settings {
+	store: ElectronStore<SettingType> = null;
+	private static instance: _Settings = null;
 
+	private constructor () {
+		this.store = new ElectronStore<SettingType>();
+	}
+
+	static getInstance (): _Settings {
+		if ( this.instance == null ) {
+			this.instance = new _Settings();
+		}		
+
+		return this.instance;
+	}
+	
 	get fighters () : SettingType["fighters"] {
 		const ret = this.store.get("fighters");
 
@@ -29,7 +42,7 @@ class _Setting {
 
 		if ( ret == undefined ) {
 			return range(0, StageUtil.stage_num).map(i => new Stage(i));
-		} else {		
+		} else {
 			return ret;
 		}
 	}
@@ -38,4 +51,4 @@ class _Setting {
 	}
 };
 
-export const Settings = new _Setting();
+export const Settings: _Settings = _Settings.getInstance();
