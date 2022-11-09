@@ -41,8 +41,8 @@ import { Settings } from "@/struct/Settings.ts";
 })
 
 export default class Home extends Vue {
-    const N = 7;
-    const range = range;
+    readonly N = 7;
+    readonly range = range;
 
     selected_fighter: Fighter[] = range(0, this.N).map(i => {
         return new Fighter(i);
@@ -60,7 +60,7 @@ export default class Home extends Vue {
     }
 
     random_choose () {
-        function shuffle(array) {
+        function shuffle(array : any[]) {
             let currentIndex = array.length,  randomIndex;
 
             // While there remain elements to shuffle...

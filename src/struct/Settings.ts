@@ -1,6 +1,6 @@
 import ElectronStore from "electron-store";
-import { Fighter, FighterUtil } from "./Fighter.ts";
-import { Stage, StageUtil } from "./Stage.ts";
+import { Fighter, FighterUtil } from "./Fighter";
+import { Stage, StageUtil } from "./Stage";
 import { range } from "@/logic/util.ts";
 
 type SettingType = {
@@ -9,8 +9,8 @@ type SettingType = {
 };
 
 class _Settings {
-	store: ElectronStore<SettingType> = null;
-	private static instance: _Settings = null;
+	store: ElectronStore<SettingType>;
+	private static instance: _Settings;
 
 	private constructor () {
 		this.store = new ElectronStore<SettingType>();
@@ -19,7 +19,7 @@ class _Settings {
 	static getInstance (): _Settings {
 		if ( this.instance == null ) {
 			this.instance = new _Settings();
-		}		
+		}
 
 		return this.instance;
 	}
